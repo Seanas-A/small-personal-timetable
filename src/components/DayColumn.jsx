@@ -1,7 +1,7 @@
 import { VIEW_START, VIEW_END, BREAK_START, BREAK_END } from "../constants";
 import { slotToPx, fmtSlot, fmtMin, net, coversBreak } from "../utils/time";
 
-export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart, onRemove }) {
+export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart }) {
   const HOUR_PX = slotPx * 4;
   const COL_H = (VIEW_END - VIEW_START) * 4 * slotPx;
 
@@ -78,16 +78,6 @@ export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart,
               <div style={{ fontSize: 10, opacity: 0.7, marginTop: 1 }}>{fmtMin(net(s))} net</div>
             </div>
 
-            <button
-              onPointerDown={e => { e.preventDefault(); e.stopPropagation(); }}
-              onClick={e => { e.stopPropagation(); onRemove(); }}
-              style={{
-                position: "absolute", top: 4, right: 4,
-                background: "rgba(255,255,255,0.1)", border: "none", color: "#fff",
-                borderRadius: 4, width: 15, height: 15, fontSize: 11,
-                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0,
-              }}
-            >×</button>
           </div>
         );
       })()}

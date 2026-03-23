@@ -78,7 +78,6 @@ return (
         calHeaderRef={calHeaderRef}
         colRefs={colRefs}
         sched={sched}
-        setSched={setSched}
         slotPx={slotPx}
         activeDay={activeDay}
         startDrag={startDrag}
