@@ -9,7 +9,13 @@ export const BREAK_END = 52;
 export const BREAK_MIN = 60;
 
 export function makeEmpty() {
-  return { Lundi: null, Mardi: null, Mercredi: null, Jeudi: null, Vendredi: null };
+  return {
+    Lundi:    { start: 32, end: 76 },
+    Mardi:    { start: 36, end: 68 },
+    Mercredi: { start: 36, end: 68 },
+    Jeudi:    { start: 36, end: 76 },
+    Vendredi: { start: 36, end: 64 },
+  };
 }
 
 const STORAGE_KEY = "timetable";
