@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, useEffect } from "react";
-import { DAYS, VIEW_SLOTS, makeDefault } from "./constants";
+import { DAYS, VIEW_SLOTS, loadSched, saveSched } from "./constants";
 import { net, fmtSlot, fmtMin } from "./utils/time";
 import { useDrag } from "./hooks/useDrag";
 import { Toast } from "./components/Toast";
@@ -7,7 +7,7 @@ import { TopBar } from "./components/TopBar";
 import { Calendar } from "./components/Calendar";
 
 export default function App() {
-  const [sched, setSched] = useState(makeDefault);
+  const [sched, setSched] = useState(loadSched);
   const [toast, setToast] = useState(null);
   const toastRef = useRef(null);
   const colRefs = useRef({});
@@ -29,6 +29,8 @@ export default function App() {
     window.addEventListener("resize", compute);
     return () => window.removeEventListener("resize", compute);
   }, []);
+
+  useEffect(() => { saveSched(sched); }, [sched]);
 
   const { startDrag, activeDay } = useDrag(sched, setSched, slotPx, colRefs);
 
@@ -58,12 +60,7 @@ export default function App() {
     catch { showToast("err", "Impossible de copier."); }
   }
 
-  function handleReset() {
-    setSched(makeDefault());
-    showToast("ok", "Remis par défaut.");
-  }
-
-  return (
+return (
     <div style={{
       height: "100vh", overflow: "hidden",
       background: "#f1f5f9", padding: 10,
@@ -76,7 +73,6 @@ export default function App() {
         totals={totals}
         output={output}
         onCopy={handleCopy}
-        onReset={handleReset}
       />
       <Calendar
         calHeaderRef={calHeaderRef}

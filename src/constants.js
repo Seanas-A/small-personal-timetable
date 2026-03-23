@@ -8,12 +8,20 @@ export const BREAK_START = 48;
 export const BREAK_END = 52;
 export const BREAK_MIN = 60;
 
-export function makeDefault() {
-  return {
-    Lundi:    { start: 32, end: 76 },
-    Mardi:    { start: 36, end: 68 },
-    Mercredi: { start: 36, end: 68 },
-    Jeudi:    { start: 36, end: 76 },
-    Vendredi: { start: 36, end: 64 },
-  };
+export function makeEmpty() {
+  return { Lundi: null, Mardi: null, Mercredi: null, Jeudi: null, Vendredi: null };
+}
+
+const STORAGE_KEY = "timetable";
+
+export function loadSched() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return makeEmpty();
+}
+
+export function saveSched(sched) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(sched));
 }

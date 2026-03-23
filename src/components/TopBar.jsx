@@ -11,7 +11,7 @@ const divider = (
   <div style={{ width: 1, height: "auto", background: "#e2e8f0", flexShrink: 0, alignSelf: "stretch" }} />
 );
 
-export function TopBar({ topBarRef, totals, output, onCopy, onReset }) {
+export function TopBar({ topBarRef, totals, output, onCopy }) {
   return (
     <div ref={topBarRef} style={{
       background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10,
@@ -58,9 +58,8 @@ export function TopBar({ topBarRef, totals, output, onCopy, onReset }) {
       {divider}
 
       {/* Boutons */}
-      <div style={{ flex: 1, minWidth: 120, maxWidth: 180, display: "flex", flexDirection: "column", gap: 6, justifyContent: "center" }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <button onClick={onCopy} style={btnStyle}>Copier output</button>
-        <button onClick={onReset} style={btnStyle}>Reset défaut</button>
       </div>
 
     </div>
