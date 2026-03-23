@@ -18,12 +18,16 @@ export function makeEmpty() {
   };
 }
 
-const STORAGE_KEY = "timetable";
+const STORAGE_KEY = "timetable_v2";
 
 export function loadSched() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const hasAnySlot = DAYS.some(d => parsed[d] !== null && parsed[d] !== undefined);
+      if (hasAnySlot) return parsed;
+    }
   } catch {}
   return makeEmpty();
 }
