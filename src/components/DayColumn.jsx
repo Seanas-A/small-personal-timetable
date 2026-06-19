@@ -1,7 +1,9 @@
-import { VIEW_START, VIEW_END, BREAK_START, BREAK_END } from "../constants";
-import { slotToPx, fmtSlot, fmtMin, net, coversBreak } from "../utils/time";
+import { VIEW_START, VIEW_END, LUNCH } from "../constants";
+import { slotToPx, fmtMin } from "../utils/time";
 
-export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart }) {
+const HATCH = "repeating-linear-gradient(45deg,rgba(255,255,255,0.22) 0,rgba(255,255,255,0.22) 4px,transparent 4px,transparent 8px)";
+
+export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart, onToggleLunch }) {
   const HOUR_PX = slotPx * 4;
   const COL_H = (VIEW_END - VIEW_START) * 4 * slotPx;
 
@@ -37,8 +39,9 @@ export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart 
       {s && (() => {
         const top = slotToPx(s.start, slotPx);
         const h = (s.end - s.start) * slotPx;
-        const breakTop = slotToPx(BREAK_START, slotPx) - slotToPx(s.start, slotPx);
-        const breakH = (BREAK_END - BREAK_START) * slotPx;
+        const breakTop = (LUNCH.start - s.start) * slotPx;
+        const breakH = (LUNCH.end - LUNCH.start) * slotPx;
+        const worked = s.worksThroughLunch;
         return (
           <div
             onPointerDown={e => onDragStart(e, day, "move")}
@@ -59,23 +62,33 @@ export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart 
               style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 7, cursor: "ns-resize", background: "rgba(255,255,255,0.07)", borderRadius: "0 0 6px 6px" }}
             />
 
-            {coversBreak(s) && (
-              <div style={{
-                position: "absolute", left: 0, right: 0,
-                top: breakTop, height: breakH,
-                backgroundImage: "repeating-linear-gradient(45deg,rgba(255,255,255,0.22) 0,rgba(255,255,255,0.22) 4px,transparent 4px,transparent 8px)",
-                borderTop: "1px solid rgba(255,255,255,0.15)",
-                borderBottom: "1px solid rgba(255,255,255,0.15)",
-                pointerEvents: "none",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.7)" }}>12–13</span>
+            {s.spansLunch && (
+              <div
+                onPointerDown={e => e.stopPropagation()}
+                onClick={() => onToggleLunch(day)}
+                title={worked
+                  ? "Pause travaillée (comptée). Cliquer pour la déduire."
+                  : "Pause déduite (1h). Cliquer si vous avez travaillé."}
+                style={{
+                  position: "absolute", left: 0, right: 0,
+                  top: breakTop, height: breakH,
+                  cursor: "pointer",
+                  backgroundColor: worked ? "rgba(74,222,128,0.25)" : "transparent",
+                  backgroundImage: worked ? "none" : HATCH,
+                  borderTop: "1px solid rgba(255,255,255,0.15)",
+                  borderBottom: "1px solid rgba(255,255,255,0.15)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}
+              >
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.8)" }}>
+                  {worked ? "12–13 ✓" : "12–13 −1h"}
+                </span>
               </div>
             )}
 
             <div style={{ padding: "9px 6px 4px", color: "#fff" }}>
-              <div style={{ fontSize: 11, fontWeight: 700 }}>{fmtSlot(s.start)}–{fmtSlot(s.end)}</div>
-              <div style={{ fontSize: 10, opacity: 0.7, marginTop: 1 }}>{fmtMin(net(s))} net</div>
+              <div style={{ fontSize: 11, fontWeight: 700 }}>{s.label}</div>
+              <div style={{ fontSize: 10, opacity: 0.7, marginTop: 1 }}>{fmtMin(s.netMinutes)} net</div>
             </div>
 
           </div>
