@@ -1,2 +1,335 @@
+/* ===== Design tokens : la source de vérité du design ===== */
+:root {
+  /* Surfaces */
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --day-col-bg: #fafafa;
+  --band: #f8fafc;
+
+  /* Bordures / lignes */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --line: rgba(148, 163, 184, 0.2);
+  --line-dashed: rgba(148, 163, 184, 0.18);
+
+  /* Texte */
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --text-ghost: #cbd5e1;
+
+  /* Bloc de travail */
+  --block: #1e293b;
+  --block-active: #334155;
+  --on-block: #ffffff;
+  --on-block-soft: rgba(255, 255, 255, 0.8);
+  --on-block-line: rgba(255, 255, 255, 0.15);
+  --on-block-handle: rgba(255, 255, 255, 0.07);
+  --lunch-worked: rgba(74, 222, 128, 0.25);
+
+  /* États */
+  --accent: #0f172a;
+  --ok-bg: #f0fdf4;
+  --ok-border: #86efac;
+  --ok-text: #166534;
+  --err-bg: #fef2f2;
+  --err-border: #fca5a5;
+  --err-text: #991b1b;
+
+  /* Métriques */
+  --radius: 10px;
+  --radius-sm: 7px;
+  --radius-xs: 6px;
+  --gap: 8px;
+  --shadow-block: 0 1px 4px rgba(0, 0, 0, 0.18);
+  --shadow-toast: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --font: system-ui, sans-serif;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; }
+
+/* ===== Shell ===== */
+.app-viewport {
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  display: flex;
+  justify-content: center;
+}
+.app-shell {
+  width: 70%;
+  height: 100vh;
+  overflow: hidden;
+  padding: 10px 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* ===== TopBar ===== */
+.topbar {
+  padding: 10px 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+  align-items: stretch;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.topbar-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.week-value {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+.vdivider {
+  width: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+.day-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 64px;
+}
+.day-stat-name {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.day-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.meter {
+  width: 52px;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%;
+  background: var(--accent);
+}
+.output-pre {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  white-space: pre;
+}
+.btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  color: inherit;
+}
+
+/* ===== Calendrier ===== */
+.calendar {
+  padding: 10px 10px 8px;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.calendar-scroll {
+  overflow-x: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.calendar-inner {
+  min-width: 400px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.calendar-header {
+  display: grid;
+  grid-template-columns: 34px repeat(5, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.calendar-day-head {
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--border);
+}
+.calendar-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 34px repeat(5, 1fr);
+  gap: 4px;
+}
+.hours-col {
+  position: relative;
+}
+.hour-label {
+  position: absolute;
+  right: 2px;
+  font-size: 9px;
+  color: var(--text-faint);
+  text-align: right;
+}
+
+/* ===== Colonne jour ===== */
+.day-col {
+  position: relative;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: var(--day-col-bg);
+}
+.hour-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid var(--line);
+}
+.hour-band--even { background: var(--band); }
+.hour-band--odd { background: var(--surface); }
+.half-hour-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 1px dashed var(--line-dashed);
+}
+.work-block {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  background: var(--block);
+  border-radius: var(--radius-xs);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  box-shadow: var(--shadow-block);
+}
+.work-block--active { background: var(--block-active); }
+.resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 7px;
+  cursor: ns-resize;
+  background: var(--on-block-handle);
+}
+.resize-handle--start { top: 0; border-radius: var(--radius-xs) var(--radius-xs) 0 0; }
+.resize-handle--end { bottom: 0; border-radius: 0 0 var(--radius-xs) var(--radius-xs); }
+.lunch-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  cursor: pointer;
+  border-top: 1px solid var(--on-block-line);
+  border-bottom: 1px solid var(--on-block-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lunch-zone--worked { background-color: var(--lunch-worked); }
+.lunch-zone--deducted {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.22) 0,
+    rgba(255, 255, 255, 0.22) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+.lunch-zone-label {
+  font-size: 9px;
+  color: var(--on-block-soft);
+}
+.work-block-info {
+  padding: 9px 6px 4px;
+  color: var(--on-block);
+}
+.work-block-title {
+  font-size: 11px;
+  font-weight: 700;
+}
+.work-block-sub {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 1px;
+}
+.day-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-ghost);
+  font-size: 13px;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99;
+  padding: 7px 16px;
+  border-radius: 9px;
+  font-size: 12px;
+  box-shadow: var(--shadow-toast);
+  border: 1px solid;
+}
+.toast--ok {
+  background: var(--ok-bg);
+  border-color: var(--ok-border);
+  color: var(--ok-text);
+}
+.toast--err {
+  background: var(--err-bg);
+  border-color: var(--err-border);
+  color: var(--err-text);
+}
