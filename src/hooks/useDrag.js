@@ -11,12 +11,12 @@ export function useDrag(sched, setSched, slotPx, colRefs) {
   function startDrag(e, day, mode) {
     e.preventDefault();
     e.stopPropagation();
-    const wd = sched.get(day);
-    if (!wd) return;
+    const d = sched.get(day);
+    if (!d?.block || d.off) return;
     const rect = colRefs.current[day]?.getBoundingClientRect();
     if (!rect) return;
     const offsetSlots = mode === "move"
-      ? pxToSlot(e.clientY - rect.top, slotPx) - wd.start
+      ? pxToSlot(e.clientY - rect.top, slotPx) - d.block.start
       : 0;
     dragRef.current = { mode, day, offsetSlots, rect };
     setActiveDay(day);

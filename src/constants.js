@@ -8,7 +8,8 @@ export const VIEW_SLOTS = (VIEW_END - VIEW_START) * 4;
 // Sa durée se déduit de SLOT_MIN, pas besoin d'une constante séparée.
 export const LUNCH = { start: 48, end: 52 };
 
-export const STORAGE_KEY = "timetable_v2";
+// Cible hebdomadaire, ajustée au prorata des jours actifs (1 jour off = -1/5).
+export const WEEK_TARGET_MIN = 39 * 60;
 
 export const DEFAULT_SCHEDULE = {
   Lundi:    { start: 32, end: 76 },

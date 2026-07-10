@@ -1,36 +1,23 @@
-import { DAYS, DEFAULT_SCHEDULE, STORAGE_KEY } from "../constants";
+import { DAYS, WEEK_TARGET_MIN } from "../constants";
 import { fmtMin } from "../utils/time";
-import { WorkDay } from "./WorkDay";
+import { Day } from "./Day";
 
 /**
- * La semaine entière : un WorkDay (ou null) par jour.
- * Immuable : set / update renvoient un nouveau Schedule.
+ * La semaine entière : un Day par jour + le report de la semaine précédente.
+ * carryMinutes : minutes faites en trop la semaine dernière (négatif = retard) ;
+ * elles se déduisent de (s'ajoutent à) la cible de cette semaine.
+ * Immuable : les transitions renvoient un nouveau Schedule.
  */
 export class Schedule {
-  constructor(days) {
+  constructor(days, carryMinutes = 0) {
     this.days = days;
+    this.carryMinutes = carryMinutes;
   }
 
   static from(raw) {
     const days = {};
-    for (const name of DAYS) days[name] = WorkDay.from(raw?.[name] ?? null);
-    return new Schedule(days);
-  }
-
-  static default() {
-    return Schedule.from(DEFAULT_SCHEDULE);
-  }
-
-  static load() {
-    try {
-      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (raw && DAYS.some(d => raw[d])) return Schedule.from(raw);
-    } catch { /* stockage illisible -> on repart du défaut */ }
-    return Schedule.default();
-  }
-
-  save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.days));
+    for (const name of DAYS) days[name] = Day.from(raw?.days?.[name]);
+    return new Schedule(days, raw?.carryMinutes ?? 0);
   }
 
   // --- Lecture / mise à jour ---
@@ -39,31 +26,54 @@ export class Schedule {
     return this.days[day];
   }
 
-  set(day, workDay) {
-    return new Schedule({ ...this.days, [day]: workDay });
+  set(day, d) {
+    return new Schedule({ ...this.days, [day]: d }, this.carryMinutes);
   }
 
-  // Applique une transition à un jour donné (no-op si le jour est vide).
+  // Applique une transition au bloc d'un jour donné (no-op si le jour est vide).
   update(day, fn) {
-    const wd = this.days[day];
-    return wd ? this.set(day, fn(wd)) : this;
+    return this.set(day, this.days[day].updateBlock(fn));
+  }
+
+  toggleOff(day) {
+    return this.set(day, this.days[day].toggleOff());
+  }
+
+  withCarry(minutes) {
+    return new Schedule(this.days, minutes);
   }
 
   // --- Dérivés ---
 
+  get activeDayCount() {
+    return DAYS.filter(d => !this.days[d].off).length;
+  }
+
+  // Cible de la semaine : 39h au prorata des jours actifs, corrigée du report.
+  get targetMinutes() {
+    const base = Math.round(WEEK_TARGET_MIN * this.activeDayCount / DAYS.length);
+    return base - this.carryMinutes;
+  }
+
   get totals() {
-    const perDay = DAYS.map(d => this.days[d]?.netMinutes ?? 0);
+    const perDay = DAYS.map(d => this.days[d].netMinutes);
+    const week = perDay.reduce((a, x) => a + x, 0);
+    const target = this.targetMinutes;
     return {
       perDay,
-      week: perDay.reduce((a, x) => a + x, 0),
+      week,
       max: perDay.reduce((m, x) => Math.max(m, x), 0),
+      target,
+      remaining: target - week,
     };
   }
 
   get text() {
-    return DAYS.map(d => {
-      const wd = this.days[d];
-      return wd ? `${d} : ${wd.label} (${fmtMin(wd.netMinutes)})` : `${d} : — (0h)`;
+    return DAYS.map(name => {
+      const d = this.days[name];
+      if (d.off) return `${name} : OFF`;
+      const wd = d.block;
+      return wd ? `${name} : ${wd.label} (${fmtMin(wd.netMinutes)})` : `${name} : — (0h)`;
     }).join("\n");
   }
 }

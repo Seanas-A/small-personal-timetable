@@ -1,9 +1,11 @@
 import { VIEW_START, VIEW_END, LUNCH } from "../constants";
 import { slotToPx, fmtMin } from "../utils/time";
 
-export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart, onToggleLunch }) {
+export function DayColumn({ day, data, isActive, slotPx, setRef, onDragStart, onToggleLunch }) {
   const HOUR_PX = slotPx * 4;
   const COL_H = (VIEW_END - VIEW_START) * 4 * slotPx;
+  const s = data.block;
+  const off = data.off;
 
   return (
     <div ref={setRef} className="day-col" style={{ height: COL_H }}>
@@ -21,8 +23,8 @@ export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart,
         <div key={i} className="half-hour-line" style={{ top: i * HOUR_PX + HOUR_PX / 2 }} />
       ))}
 
-      {/* Bloc travail */}
-      {s && (() => {
+      {/* Bloc travail (masqué si jour off) */}
+      {!off && s && (() => {
         const top = slotToPx(s.start, slotPx);
         const h = (s.end - s.start) * slotPx;
         const breakTop = (LUNCH.start - s.start) * slotPx;
@@ -68,7 +70,9 @@ export function DayColumn({ day, slot: s, isActive, slotPx, setRef, onDragStart,
         );
       })()}
 
-      {!s && <div className="day-empty">—</div>}
+      {!off && !s && <div className="day-empty">—</div>}
+
+      {off && <div className="day-off-overlay">OFF</div>}
     </div>
   );
 }

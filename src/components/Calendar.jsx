@@ -2,7 +2,7 @@ import { DAYS, VIEW_START, VIEW_END } from "../constants";
 import { pad2 } from "../utils/time";
 import { DayColumn } from "./DayColumn";
 
-export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startDrag, onToggleLunch }) {
+export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startDrag, onToggleLunch, onToggleOff }) {
   const HOUR_PX = slotPx * 4;
   const COL_H = (VIEW_END - VIEW_START) * 4 * slotPx;
 
@@ -11,12 +11,24 @@ export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startD
       <div className="calendar-scroll">
         <div className="calendar-inner">
 
-          {/* En-têtes des jours */}
+          {/* En-têtes des jours — cliquer active/désactive le jour */}
           <div className="calendar-header">
             <div />
-            {DAYS.map(d => (
-              <div key={d} className="calendar-day-head">{d}</div>
-            ))}
+            {DAYS.map(d => {
+              const off = sched.get(d).off;
+              return (
+                <button
+                  key={d}
+                  className={`calendar-day-head${off ? " calendar-day-head--off" : ""}`}
+                  onClick={() => onToggleOff(d)}
+                  title={off
+                    ? "Jour off (non compté). Cliquer pour le réactiver."
+                    : "Cliquer pour marquer ce jour off (retire 1/5 de la cible)."}
+                >
+                  {d}{off ? " · OFF" : ""}
+                </button>
+              );
+            })}
           </div>
 
           {/* Grille — calBodyRef mesure la hauteur disponible pour dimensionner les slots */}
@@ -37,7 +49,7 @@ export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startD
                 <DayColumn
                   key={day}
                   day={day}
-                  slot={sched.get(day)}
+                  data={sched.get(day)}
                   isActive={activeDay === day}
                   slotPx={slotPx}
                   setRef={el => colRefs.current[day] = el}
