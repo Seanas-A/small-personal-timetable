@@ -1,7 +1,7 @@
 import { VIEW_START, VIEW_END, LUNCH } from "../constants";
 import { slotToPx, fmtMin } from "../utils/time";
 
-export function DayColumn({ day, data, isActive, slotPx, setRef, onDragStart, onToggleLunch }) {
+export function DayColumn({ day, data, isActive, slotPx, setRef, onDragStart, onCycleLunch }) {
   const HOUR_PX = slotPx * 4;
   const COL_H = (VIEW_END - VIEW_START) * 4 * slotPx;
   const s = data.block;
@@ -29,7 +29,6 @@ export function DayColumn({ day, data, isActive, slotPx, setRef, onDragStart, on
         const h = (s.end - s.start) * slotPx;
         const breakTop = (LUNCH.start - s.start) * slotPx;
         const breakH = (LUNCH.end - LUNCH.start) * slotPx;
-        const worked = s.worksThroughLunch;
         return (
           <div
             onPointerDown={e => onDragStart(e, day, "move")}
@@ -48,16 +47,12 @@ export function DayColumn({ day, data, isActive, slotPx, setRef, onDragStart, on
             {s.spansLunch && (
               <div
                 onPointerDown={e => e.stopPropagation()}
-                onClick={() => onToggleLunch(day)}
-                title={worked
-                  ? "Pause travaillée (comptée). Cliquer pour la déduire."
-                  : "Pause déduite (1h). Cliquer si vous avez travaillé."}
-                className={`lunch-zone ${worked ? "lunch-zone--worked" : "lunch-zone--deducted"}`}
+                onClick={() => onCycleLunch(day)}
+                title={s.lunch.hint}
+                className={`lunch-zone lunch-zone--${s.lunch.key}`}
                 style={{ top: breakTop, height: breakH }}
               >
-                <span className="lunch-zone-label">
-                  {worked ? "12–13 ✓" : "12–13 −1h"}
-                </span>
+                <span className="lunch-zone-label">{s.lunch.badge}</span>
               </div>
             )}
 

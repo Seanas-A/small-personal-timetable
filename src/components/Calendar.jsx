@@ -2,7 +2,7 @@ import { DAYS, VIEW_START, VIEW_END } from "../constants";
 import { pad2 } from "../utils/time";
 import { DayColumn } from "./DayColumn";
 
-export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startDrag, onToggleLunch, onToggleOff }) {
+export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startDrag, onCycleLunch, onToggleOff }) {
   const HOUR_PX = slotPx * 4;
   const COL_H = (VIEW_END - VIEW_START) * 4 * slotPx;
 
@@ -54,7 +54,7 @@ export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startD
                   slotPx={slotPx}
                   setRef={el => colRefs.current[day] = el}
                   onDragStart={startDrag}
-                  onToggleLunch={onToggleLunch}
+                  onCycleLunch={onCycleLunch}
                 />
               ))}
 

@@ -1,24 +1,22 @@
 import { SLOT_MIN, LUNCH } from "../constants";
 import { fmtSlot } from "../utils/time";
-
-// Durée de la pause déjeuner, déduite de la fenêtre (1 source de vérité).
-const LUNCH_MIN = (LUNCH.end - LUNCH.start) * SLOT_MIN;
+import { LunchMode } from "./LunchMode";
 
 /**
  * Le travail d'une journée : un intervalle [start, end[ en slots de 15 min,
- * et le fait d'avoir travaillé pendant la pause déjeuner ou non.
+ * et le mode de pause déjeuner (entière, rapide ou travaillée).
  * Immuable : les transitions renvoient un nouveau WorkDay.
  */
 export class WorkDay {
-  constructor({ start, end, worksThroughLunch = false }) {
+  constructor({ start, end, lunch = LunchMode.BREAK }) {
     this.start = start;
     this.end = end;
-    this.worksThroughLunch = worksThroughLunch;
+    this.lunch = lunch;
   }
 
   // null -> null, sinon hydrate depuis des données brutes (localStorage, défaut...).
   static from(data) {
-    return data ? new WorkDay(data) : null;
+    return data ? new WorkDay({ ...data, lunch: LunchMode.from(data.lunch) }) : null;
   }
 
   // --- Calcul, dans l'ordre logique ---
@@ -36,9 +34,10 @@ export class WorkDay {
     return this.start <= LUNCH.start && this.end >= LUNCH.end;
   }
 
-  // On ne retire le déjeuner que s'il est recouvert ET non travaillé.
+  // La déduction est portée par le mode ; rien à déduire si la fenêtre
+  // n'est pas recouverte.
   get lunchDeduction() {
-    return this.spansLunch && !this.worksThroughLunch ? LUNCH_MIN : 0;
+    return this.spansLunch ? this.lunch.deduction : 0;
   }
 
   get netMinutes() {
@@ -63,7 +62,7 @@ export class WorkDay {
     return new WorkDay({ ...this, end });
   }
 
-  toggleLunch() {
-    return new WorkDay({ ...this, worksThroughLunch: !this.worksThroughLunch });
+  cycleLunch() {
+    return new WorkDay({ ...this, lunch: this.lunch.next });
   }
 }

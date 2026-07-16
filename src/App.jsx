@@ -26,8 +26,8 @@ export default function App() {
     toastRef.current = setTimeout(() => setToast(null), 2200);
   }
 
-  function toggleLunch(day) {
-    setSched(p => p.update(day, wd => wd.toggleLunch()));
+  function cycleLunch(day) {
+    setSched(p => p.update(day, wd => wd.cycleLunch()));
   }
 
   function toggleOff(day) {
@@ -66,7 +66,7 @@ export default function App() {
           slotPx={slotPx}
           activeDay={activeDay}
           startDrag={startDrag}
-          onToggleLunch={toggleLunch}
+          onCycleLunch={cycleLunch}
           onToggleOff={toggleOff}
         />
       </div>
