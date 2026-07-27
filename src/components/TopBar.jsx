@@ -57,7 +57,7 @@ function CarrySection({ carryMinutes, onChange }) {
 }
 
 export function TopBar({
-  totals, dayStats, carryMinutes, onCarryChange, output, onCopy, onNewWeek,
+  totals, dayStats, carryMinutes, onCarryChange, onCopy, onNewWeek,
   showWeekend, onToggleWeekend, onSaveDefault, onResetToDefault,
 }) {
   const { week, target, remaining } = totals;
@@ -105,18 +105,10 @@ export function TopBar({
 
       <div className="vdivider" />
 
-      {/* Output */}
-      <div style={{ flexShrink: 0 }}>
-        <div className="stat-label" style={{ fontSize: 10, marginBottom: 4 }}>Output</div>
-        <pre className="output-pre">{output}</pre>
-      </div>
-
-      <div className="vdivider" />
-
-      {/* Actions */}
+      {/* Actions — l'output ne s'affiche plus, il se copie */}
       <div className="topbar-actions">
-        <button onClick={onNewWeek} className="btn">Nouvelle semaine</button>
-        <button onClick={onCopy} className="btn">Copier output</button>
+        <button onClick={onNewWeek} className="btn btn--primary">↻&nbsp; Nouvelle semaine</button>
+        <button onClick={onCopy} className="btn">Copier l'output</button>
       </div>
 
       <SettingsMenu
@@ -124,6 +116,7 @@ export function TopBar({
         onToggleWeekend={onToggleWeekend}
         onSaveDefault={onSaveDefault}
         onResetToDefault={onResetToDefault}
+        onCopy={onCopy}
       />
 
     </div>

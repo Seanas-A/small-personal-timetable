@@ -90,7 +90,6 @@ export default function App() {
           dayStats={dayStats}
           carryMinutes={sched.carryMinutes}
           onCarryChange={setCarry}
-          output={output}
           onCopy={handleCopy}
           onNewWeek={handleNewWeek}
           showWeekend={settings.showWeekend}
