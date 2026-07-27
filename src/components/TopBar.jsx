@@ -105,10 +105,9 @@ export function TopBar({
 
       <div className="vdivider" />
 
-      {/* Actions — l'output ne s'affiche plus, il se copie */}
+      {/* Action — la copie de l'output vit dans les réglages */}
       <div className="topbar-actions">
         <button onClick={onNewWeek} className="btn btn--primary">↻&nbsp; Nouvelle semaine</button>
-        <button onClick={onCopy} className="btn">Copier l'output</button>
       </div>
 
       <SettingsMenu
