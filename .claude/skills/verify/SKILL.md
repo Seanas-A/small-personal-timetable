@@ -45,5 +45,8 @@ const browser = await puppeteer.launch({
 
 ## Gotchas
 
+- « Nouvelle semaine » et « Réinitialiser au défaut » ouvrent un `window.confirm` :
+  brancher `page.on("dialog", d => d.accept())` avant de cliquer.
+
 - `page.click(sel, { clickCount: 3 })` ne sélectionne PAS le texte en headless.
 - Attendre ~300 ms après reload : `slotPx` est mesuré par ResizeObserver.

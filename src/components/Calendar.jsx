@@ -1,10 +1,11 @@
-import { DAYS, VIEW_START, VIEW_END } from "../constants";
+import { VIEW_START, VIEW_END } from "../constants";
 import { pad2 } from "../utils/time";
 import { DayColumn } from "./DayColumn";
 
-export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startDrag, onCycleLunch, onToggleOff }) {
+export function Calendar({ calBodyRef, colRefs, days, sched, slotPx, activeDay, startDrag, onCycleLunch, onToggleOff }) {
   const HOUR_PX = slotPx * 4;
   const COL_H = (VIEW_END - VIEW_START) * 4 * slotPx;
+  const gridCols = { gridTemplateColumns: `34px repeat(${days.length}, 1fr)` };
 
   return (
     <div className="card calendar">
@@ -12,9 +13,9 @@ export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startD
         <div className="calendar-inner">
 
           {/* En-têtes des jours — cliquer active/désactive le jour */}
-          <div className="calendar-header">
+          <div className="calendar-header" style={gridCols}>
             <div />
-            {DAYS.map(d => {
+            {days.map(d => {
               const off = sched.get(d).off;
               return (
                 <button
@@ -23,7 +24,7 @@ export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startD
                   onClick={() => onToggleOff(d)}
                   title={off
                     ? "Jour off (non compté). Cliquer pour le réactiver."
-                    : "Cliquer pour marquer ce jour off (retire 1/5 de la cible)."}
+                    : "Cliquer pour marquer ce jour off."}
                 >
                   {d}{off ? " · OFF" : ""}
                 </button>
@@ -33,7 +34,7 @@ export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startD
 
           {/* Grille — calBodyRef mesure la hauteur disponible pour dimensionner les slots */}
           <div className="calendar-body" ref={calBodyRef}>
-            <div className="calendar-grid">
+            <div className="calendar-grid" style={gridCols}>
 
               {/* Colonne heures */}
               <div className="hours-col" style={{ height: COL_H }}>
@@ -45,7 +46,7 @@ export function Calendar({ calBodyRef, colRefs, sched, slotPx, activeDay, startD
               </div>
 
               {/* Colonnes jours */}
-              {DAYS.map(day => (
+              {days.map(day => (
                 <DayColumn
                   key={day}
                   day={day}

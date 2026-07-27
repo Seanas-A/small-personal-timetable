@@ -49,8 +49,8 @@ export function DayColumn({ day, data, isActive, slotPx, setRef, onDragStart, on
                 onPointerDown={e => e.stopPropagation()}
                 onClick={() => onCycleLunch(day)}
                 title={s.lunch.hint}
-                className={`lunch-zone lunch-zone--${s.lunch.key}`}
-                style={{ top: breakTop, height: breakH }}
+                className="lunch-zone"
+                style={{ top: breakTop, height: breakH, "--lunch-ratio": s.lunch.ratio }}
               >
                 <span className="lunch-zone-label">{s.lunch.badge}</span>
               </div>
