@@ -2,11 +2,13 @@ import { useState } from "react";
 import { fmtMin, parseHM } from "../utils/time";
 import { SettingsMenu } from "./SettingsMenu";
 
-// Saisie du report : la valeur absolue dans le champ, le sens via le toggle
-// Avance (fait en trop -> cible réduite) / Retard (à rattraper -> cible augmentée).
+// Saisie du report : le stepper +/− ajuste par pas de 10 min sur la valeur
+// signée (traverse zéro), le champ reçoit la valeur absolue, et l'indicateur
+// Avance (fait en trop -> cible réduite) / Retard (à rattraper -> cible
+// augmentée) reflète le signe sans être cliquable.
 function CarrySection({ carryMinutes, onChange }) {
-  const [sign, setSign] = useState(carryMinutes < 0 ? -1 : 1);
   const [text, setText] = useState(fmtMin(Math.abs(carryMinutes)));
+  const sign = carryMinutes < 0 ? -1 : 1;
 
   function commit() {
     const abs = parseHM(text.replace(/^[+-]\s*/, ""));
@@ -15,18 +17,16 @@ function CarrySection({ carryMinutes, onChange }) {
     setText(fmtMin(abs));
   }
 
-  function pick(nextSign) {
-    setSign(nextSign);
-    const abs = Math.abs(carryMinutes);
-    if (abs > 0) onChange(nextSign * abs);
-  }
-
   const tone = Math.abs(carryMinutes) === 0 ? "" : sign > 0 ? " carry-input--ahead" : " carry-input--behind";
 
   return (
     <div className="carry-box">
       <div className="stat-label">Report sem. passée</div>
       <div className="carry-row">
+        <div className="carry-stepper">
+          <button className="carry-step-btn" title="+10 min" onClick={() => onChange(carryMinutes + 10)}>+</button>
+          <button className="carry-step-btn" title="−10 min" onClick={() => onChange(carryMinutes - 10)}>−</button>
+        </div>
         <input
           className={`carry-input${tone}`}
           value={text}
@@ -37,18 +37,12 @@ function CarrySection({ carryMinutes, onChange }) {
           title='Valeur absolue du report (ex. "1h30")'
         />
         <div className="carry-toggle">
-          <button
-            className={`carry-toggle-btn${sign > 0 ? " carry-toggle-btn--ahead" : ""}`}
-            onClick={() => pick(1)}
-          >
+          <span className={`carry-toggle-btn${sign > 0 ? " carry-toggle-btn--ahead" : ""}`}>
             Avance
-          </button>
-          <button
-            className={`carry-toggle-btn${sign < 0 ? " carry-toggle-btn--behind" : ""}`}
-            onClick={() => pick(-1)}
-          >
+          </span>
+          <span className={`carry-toggle-btn${sign < 0 ? " carry-toggle-btn--behind" : ""}`}>
             Retard
-          </button>
+          </span>
         </div>
       </div>
       <div className="carry-hint">{sign > 0 ? "déduite de la cible" : "ajouté à la cible"}</div>

@@ -192,13 +192,44 @@ body { margin: 0; }
   align-items: stretch;
   gap: 6px;
 }
+/* Stepper +/− : même hauteur que le champ (align-items: stretch), +10 min en
+   haut, −10 min en bas, sur la valeur signée. */
+.carry-stepper {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.carry-step-btn {
+  flex: 1;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: inherit;
+  border: none;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.carry-step-btn:first-child {
+  border-bottom: 1px solid var(--border);
+}
+.carry-step-btn:hover {
+  background: var(--bg);
+  color: var(--text);
+}
 .carry-toggle {
   display: flex;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
+/* Indicateur seulement (non cliquable) : le signe vient du stepper. */
 .carry-toggle-btn {
+  display: flex;
+  align-items: center;
   padding: 4px 9px;
   font-size: 11px;
   font-weight: 600;
@@ -206,7 +237,7 @@ body { margin: 0; }
   border: none;
   background: var(--surface-muted);
   color: var(--text-faint);
-  cursor: pointer;
+  cursor: default;
 }
 .carry-toggle-btn--ahead {
   background: var(--ok-bg);
